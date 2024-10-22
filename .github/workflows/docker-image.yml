@@ -3,7 +3,8 @@ name: Build and Deploy with Docker Compose
 on:
   push:
     branches:
-      - main
+      - main  # Change this to the branch you want to trigger the workflow on
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -23,13 +24,16 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
       - name: Build and push Docker images
         run: |
-          # Build and push images defined in the docker-compose file
           docker-compose -f pwd.yml build
           docker-compose -f pwd.yml push
 
       - name: Run Docker Compose
         run: |
-          # Start your services in detached mode
           docker-compose -f pwd.yml up -d
