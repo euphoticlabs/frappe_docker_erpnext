@@ -25,9 +25,6 @@ jobs:
 
       - name: Build and push Docker images
         run: |
-          # Navigate to the directory where your docker-compose.yml is located
-          cd path/to/your/directory  # Update this to your actual path
-          
           # Build and push images defined in the docker-compose file
           docker-compose -f pwd.yml build
           docker-compose -f pwd.yml push
