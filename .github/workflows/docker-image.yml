@@ -1,0 +1,38 @@
+name: Build and Deploy with Docker Compose
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:19.03.12
+        options: --privileged
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build and push Docker images
+        run: |
+          # Navigate to the directory where your docker-compose.yml is located
+          cd path/to/your/directory  # Update this to your actual path
+          
+          # Build and push images defined in the docker-compose file
+          docker-compose -f pwd.yml build
+          docker-compose -f pwd.yml push
+
+      - name: Run Docker Compose
+        run: |
+          # Start your services in detached mode
+          docker-compose -f pwd.yml up -d
